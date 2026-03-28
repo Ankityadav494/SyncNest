@@ -61,7 +61,7 @@ exports.login = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user.id).select('-password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -73,20 +73,20 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     const { name, email, college, bio, skills, github, linkedin, password } = req.body;
 
-    user.name = name || user.name;
-    user.email = email || user.email;
-    user.college = college || user.college;
-    user.bio = bio || user.bio;
-    user.skills = skills || user.skills;
-    user.github = github || user.github;
-    user.linkedin = linkedin || user.linkedin;
+    user.name = name !== undefined ? name : user.name;
+    user.email = email !== undefined ? email : user.email;
+    user.college = college !== undefined ? college : user.college;
+    user.bio = bio !== undefined ? bio : user.bio;
+    user.skills = skills !== undefined ? skills : user.skills;
+    user.github = github !== undefined ? github : user.github;
+    user.linkedin = linkedin !== undefined ? linkedin : user.linkedin;
 
     if (password) {
       const salt = await bcrypt.genSalt(10);

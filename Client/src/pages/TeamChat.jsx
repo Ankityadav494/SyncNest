@@ -1,5 +1,5 @@
 import socket from "../socket";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import API from "../api/api";
@@ -7,6 +7,7 @@ import API from "../api/api";
 const TeamChat = () => {
   const { projectId } = useParams();
   const { user } = useAuth();
+  const messagesEndRef = useRef(null);
 
   const [messageText, setMessageText] = useState("");
   const [messages, setMessages] = useState([]);
@@ -57,6 +58,11 @@ const TeamChat = () => {
     }
   }, [projectId]);
 
+  // Auto-scroll to bottom of chat
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
@@ -69,37 +75,43 @@ const TeamChat = () => {
 
       socket.emit("sendMessage", {
         projectId,
-        senderId: user._id,
-        text: messageText,
+        message: res.data,  // full populated message from API
       });
 
       setMessages((prev) => [...prev, res.data]);
       setMessageText("");
     } catch (err) {
-      setError("Unable to send message");
+      console.error(err);
+      // Fallback: manually display text message
+      alert("Unable to send message to server.");
     }
   };
 
   if (loading) {
     return (
-      <div className="container">
-        <p>Loading chat...</p>
+      <div className="flex justify-center items-center min-h-[70vh] bg-slate-50">
+        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container">
-        <p>{error}</p>
+      <div className="min-h-[70vh] flex justify-center items-center bg-slate-50">
+        <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-100 max-w-md w-full text-center shadow-sm">
+          <svg className="w-12 h-12 mx-auto mb-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <p className="text-lg font-bold">{error}</p>
+        </div>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="container">
-        <p>Project not found.</p>
+      <div className="min-h-[70vh] flex justify-center items-center bg-slate-50">
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center max-w-md w-full">
+          <h2 className="text-2xl font-bold text-gray-800">Project Not Found</h2>
+        </div>
       </div>
     );
   }
@@ -109,56 +121,103 @@ const TeamChat = () => {
   }
 
   return (
-    <div className="container">
-      <div className="card" style={{ marginBottom: "20px" }}>
-        <h1>{project.title} - Team Chat</h1>
-      </div>
-
-      <div
-        className="card"
-        style={{
-          minHeight: "350px",
-          maxHeight: "450px",
-          overflowY: "auto",
-          marginBottom: "20px",
-        }}
-      >
-        {messages.length > 0 ? (
-          messages.map((msg, index) => (
-            <div
-              key={index}
-              style={{
-                marginBottom: "15px",
-                padding: "12px",
-                background:
-                  msg.sender === user._id
-                    ? "#eef2ff"
-                    : "#f5f5f5",
-                borderRadius: "10px",
-              }}
-            >
-              <p style={{ fontWeight: "bold" }}>
-                {msg.sender?.name || "User"}
-              </p>
-              <p>{msg.text}</p>
+    <div className="h-[calc(100vh-80px)] bg-slate-50 py-6 px-4 sm:px-6 lg:px-8 overflow-hidden flex flex-col">
+      <div className="max-w-5xl mx-auto w-full flex flex-col h-full bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-200 flex-grow">
+        
+        {/* Chat Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4 flex items-center justify-between shrink-0 shadow-md z-10">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30 text-white shadow-sm">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" /></svg>
             </div>
-          ))
-        ) : (
-          <p>No messages yet</p>
-        )}
-      </div>
+            <div>
+              <h1 className="text-xl font-bold text-white leading-none mb-1">{project.title}</h1>
+              <span className="text-xs font-medium text-blue-100 flex items-center">
+                <span className="w-2 h-2 rounded-full bg-green-400 mr-1.5 shadow-sm"></span>
+                Team Active
+              </span>
+            </div>
+          </div>
+          <div className="hidden sm:block">
+            <span className="px-3 py-1 bg-white/10 text-white border border-white/20 rounded-lg text-sm font-semibold backdrop-blur-sm">
+              Secured Channel
+            </span>
+          </div>
+        </div>
 
-      <form onSubmit={handleSendMessage} className="card">
-        <textarea
-          rows="3"
-          placeholder="Type message..."
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-        />
-        <button type="submit" className="action-btn">
-          Send
-        </button>
-      </form>
+        {/* Chat Messages */}
+        <div className="flex-grow p-6 overflow-y-auto bg-gray-50/50 flex flex-col gap-6" style={{ scrollBehavior: 'smooth' }}>
+          {messages.length > 0 ? (
+            messages.map((msg, index) => {
+              const isMine = msg.sender === user._id || (msg.sender && msg.sender._id === user._id);
+              return (
+                <div key={index} className={`flex w-full ${isMine ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[75%] sm:max-w-[65%] flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
+                    
+                    {!isMine && (
+                      <span className="text-xs font-semibold text-gray-500 mb-1 ml-1">
+                        {msg.sender?.name || "Team Member"}
+                      </span>
+                    )}
+
+                    <div className={`relative px-5 py-3 shadow-sm text-[15px] leading-relaxed ${
+                      isMine 
+                        ? 'bg-indigo-600 text-white rounded-2xl rounded-tr-sm' 
+                        : 'bg-white text-gray-800 border border-gray-200 rounded-2xl rounded-tl-sm'
+                    }`}>
+                      {msg.text}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="flex-grow flex flex-col items-center justify-center text-center px-4">
+              <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-4 border border-indigo-100">
+                <svg className="w-10 h-10 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-1">Start the conversation</h3>
+              <p className="text-gray-500 max-w-sm">Say hello to coordinate with your team! All members can view messages sent here.</p>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Message Input */}
+        <div className="p-4 sm:p-5 bg-white border-t border-gray-200 shrink-0">
+          <form onSubmit={handleSendMessage} className="flex gap-3">
+            <input
+              type="text"
+              placeholder="Type your message..."
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              className="flex-grow px-5 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow text-[15px] text-gray-800 shadow-sm placeholder-gray-400"
+            />
+            <button 
+              type="submit" 
+              disabled={!messageText.trim()}
+              className={`flex items-center justify-center px-6 py-3.5 rounded-xl font-bold text-white transition-all shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 focus:ring-offset-white ${
+                messageText.trim() 
+                  ? 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:-translate-y-0.5' 
+                  : 'bg-indigo-300 cursor-not-allowed hidden sm:flex'
+              }`}
+            >
+              <span className="hidden sm:inline mr-2">Send</span>
+              <svg className="w-5 h-5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+            </button>
+            <button 
+              type="submit" 
+              disabled={!messageText.trim()}
+              className={`sm:hidden flex items-center justify-center p-3.5 rounded-xl transition-all shadow-md ${
+                messageText.trim() ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'
+              }`}
+            >
+              <svg className="w-6 h-6 transform -rotate-90 origin-center translate-x-0.5 -translate-y-0.5" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+            </button>
+          </form>
+        </div>
+
+      </div>
     </div>
   );
 };

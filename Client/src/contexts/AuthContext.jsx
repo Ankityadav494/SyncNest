@@ -5,19 +5,38 @@ import socket from '../socket';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = sessionStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  const [token, setToken] = useState(() => sessionStorage.getItem('token') || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (token) {
       setAuthToken(token);
-      if (user?._id) {
-        socket.emit('joinUser', user._id);
+      sessionStorage.setItem('token', token);
+      if (user) {
+        sessionStorage.setItem('user', JSON.stringify(user));
       }
+      
+      const joinRoom = () => {
+        if (user?._id) {
+          socket.emit('joinUser', user._id);
+        }
+      };
+      
+      joinRoom(); // Initial join
+      socket.on('connect', joinRoom); // Re-join on auto-reconnect
+
+      return () => {
+        socket.off('connect', joinRoom);
+      };
     } else {
       setAuthToken(null);
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
     }
   }, [token, user]);
 
@@ -61,12 +80,14 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     setAuthToken(null);
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     socket.emit('leaveProject');
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, login, register, logout, loading, error, setError }}
+      value={{ user, setUser, login, register, logout, loading, error, setError }}
     >
       {children}
     </AuthContext.Provider>

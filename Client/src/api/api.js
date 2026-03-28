@@ -1,6 +1,6 @@
 import axios from "axios";
 
-let authToken = null;
+let authToken = sessionStorage.getItem('token') || null;
 
 export const setAuthToken = (token) => {
   authToken = token || null;

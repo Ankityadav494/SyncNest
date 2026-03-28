@@ -1,0 +1,58 @@
+[
+  {
+    "_id": "69c7a91ab7c4b1002a166064",
+    "project": {
+      "_id": "69c79ef35f0f2cee1f5716f6",
+      "title": "devops",
+      "description": "bocsa",
+      "skills": [
+        "jboc"
+      ],
+      "deadline": "2026-03-11T00:00:00.000Z",
+      "type": "Hackathon",
+      "difficulty": "Beginner",
+      "mode": "Remote",
+      "owner": {
+        "_id": "69c79eb75f0f2cee1f5716ef",
+        "name": "Ankit Yadav",
+        "email": "ankityadavbkpur@gmail.com"
+      },
+      "createdAt": "2026-03-28T09:27:15.824Z",
+      "updatedAt": "2026-03-28T09:27:15.824Z",
+      "__v": 0
+    },
+    "applicant": "69c7a90db7c4b1002a16604e",
+    "status": "Pending",
+    "createdAt": "2026-03-28T10:10:34.314Z",
+    "updatedAt": "2026-03-28T10:10:34.314Z",
+    "__v": 0
+  },
+  {
+    "_id": "69c7ab97e4af17b6b316e034",
+    "project": {
+      "_id": "69c7ab85e4af17b6b316e017",
+      "title": "v wlqwvervkjbi",
+      "description": "ubu",
+      "skills": [
+        "ubac"
+      ],
+      "deadline": "2026-03-27T00:00:00.000Z",
+      "type": "Hackathon",
+      "difficulty": "Beginner",
+      "mode": "Remote",
+      "owner": {
+        "_id": "69c79eb75f0f2cee1f5716ef",
+        "name": "Ankit Yadav",
+        "email": "ankityadavbkpur@gmail.com"
+      },
+      "createdAt": "2026-03-28T10:20:53.854Z",
+      "updatedAt": "2026-03-28T10:20:53.854Z",
+      "__v": 0
+    },
+    "applicant": "69c7a90db7c4b1002a16604e",
+    "status": "Pending",
+    "createdAt": "2026-03-28T10:21:11.246Z",
+    "updatedAt": "2026-03-28T10:21:11.246Z",
+    "__v": 0
+  }
+]

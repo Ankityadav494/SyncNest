@@ -12,7 +12,7 @@ const applicationRoutes = require("./routes/applicationRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
-const Message = require("./models/Message");
+
 
 dotenv.config();
 connectDB();
@@ -59,17 +59,11 @@ io.on("connection", (socket) => {
     socket.join(userId);
   });
 
-  // 🔹 Send message (chat)
-  socket.on("sendMessage", async (data) => {
-    const { projectId, senderId, text } = data;
-
-    const message = await Message.create({
-      project: projectId,
-      sender: senderId,
-      text,
-    });
-
-    io.to(projectId).emit("receiveMessage", message);
+  // 🔹 Send message (broadcast only — REST API already persists to DB)
+  socket.on("sendMessage", (data) => {
+    const { projectId, message } = data;
+    // Broadcast to all OTHER members in the project room
+    socket.to(projectId).emit("receiveMessage", message);
   });
 
   socket.on("disconnect", () => {

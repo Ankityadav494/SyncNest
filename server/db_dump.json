@@ -1,0 +1,43 @@
+{
+  "users": [
+    {
+      "id": "69c79eb75f0f2cee1f5716ef",
+      "name": "Ankit Yadav",
+      "email": "ankityadavbkpur@gmail.com"
+    },
+    {
+      "id": "69c7a86db7c4b1002a16604b",
+      "name": "test3",
+      "email": "test3@test.com"
+    },
+    {
+      "id": "69c7a90db7c4b1002a16604e",
+      "name": "jay",
+      "email": "jay@mc"
+    }
+  ],
+  "projects": [
+    {
+      "id": "69c79ef35f0f2cee1f5716f6",
+      "title": "devops",
+      "owner": "69c79eb75f0f2cee1f5716ef"
+    },
+    {
+      "id": "69c7ab85e4af17b6b316e017",
+      "title": "v wlqwvervkjbi",
+      "owner": "69c79eb75f0f2cee1f5716ef"
+    }
+  ],
+  "applications": [
+    {
+      "id": "69c7a91ab7c4b1002a166064",
+      "project": "69c79ef35f0f2cee1f5716f6",
+      "applicant": "69c7a90db7c4b1002a16604e"
+    },
+    {
+      "id": "69c7ab97e4af17b6b316e034",
+      "project": "69c7ab85e4af17b6b316e017",
+      "applicant": "69c7a90db7c4b1002a16604e"
+    }
+  ]
+}
