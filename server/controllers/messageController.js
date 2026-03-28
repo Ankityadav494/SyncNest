@@ -23,7 +23,7 @@ const createMessage = async (req, res) => {
 
     const newMessage = await Message.create({
       project: projectId,
-      sender: req.user._id,
+      sender: req.user.id,   // JWT payload uses { id }, not { _id }
       text,
     });
 

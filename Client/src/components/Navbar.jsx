@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import API from "../api/api";
 import socket from "../socket";
 import { useAuth } from "../contexts/AuthContext";
+import srmLogo from "../assets/srm.jpg";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -58,11 +59,12 @@ const Navbar = () => {
 
           {/* ── Logo + Brand ── */}
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 shadow-lg shadow-indigo-500/30 group-hover:shadow-indigo-500/60 transition-all group-hover:scale-105">
-              <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5">
-                <path d="M12 2L20.5 7V17L12 22L3.5 17V7L12 2Z" stroke="white" strokeWidth="1.8" strokeLinejoin="round" fill="rgba(255,255,255,0.15)" />
-                <path d="M12 8L16 10.5V15.5L12 18L8 15.5V10.5L12 8Z" fill="white" fillOpacity="0.9" />
-              </svg>
+            <div className="w-9 h-9 rounded-xl overflow-hidden shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 group-hover:scale-105 transition-all border border-white/20 flex-shrink-0">
+              <img
+                src={srmLogo}
+                alt="SRM Logo"
+                className="w-full h-full object-contain bg-white"
+              />
             </div>
             <span className="text-white font-extrabold text-xl tracking-tight">
               SRM<span className="text-indigo-400">Hive</span>
