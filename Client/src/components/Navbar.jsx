@@ -60,7 +60,7 @@ const Navbar = () => {
           to="/"
           style={{ color: "white", fontSize: "1.4rem", fontWeight: "bold" }}
         >
-          SyncNest
+          SRMHive
         </Link>
 
         <div
