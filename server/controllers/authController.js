@@ -213,7 +213,7 @@ exports.registerWithOtp = async (req, res) => {
       token: generateToken(user._id),
     });
   } catch (error) {
-    console.error('registerWithOtp error:', error.message);
+    console.error('🔥 FULL ERROR:', error);
     res.status(500).json({ message: 'Registration failed. Please try again.' });
   }
 };
