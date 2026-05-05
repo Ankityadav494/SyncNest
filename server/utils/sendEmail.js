@@ -2,14 +2,19 @@ const nodemailer = require('nodemailer');
 
 const sendOtpEmail = async (to, otp) => {
   try {
-    // ✅ Clean and reliable transporter (works on Render)
+    // ✅ Transporter (fixed for Render IPv6 issue)
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      family: 4, // 🔥 forces IPv4 (fixes ENETUNREACH error)
     });
+
+    // ✅ Optional: verify connection (helps debugging)
+    await transporter.verify();
+    console.log("✅ SMTP server is ready");
 
     // ✅ Mail content
     const mailOptions = {
@@ -56,7 +61,7 @@ const sendOtpEmail = async (to, otp) => {
     return info;
 
   } catch (error) {
-    // 🔥 IMPORTANT: show full error
+    // 🔥 FULL error logging (important for debugging)
     console.error("❌ EMAIL ERROR:", error);
     throw error;
   }
