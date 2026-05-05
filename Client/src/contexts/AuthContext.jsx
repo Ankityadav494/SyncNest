@@ -76,6 +76,30 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginWithOtp = async (email, otp) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await API.post('/auth/verify-otp', { email, otp });
+      setUser(res.data);
+      setToken(res.data.token);
+      socket.emit('joinUser', res.data._id);
+      return res.data;
+    } catch (err) {
+      setError(err.response?.data?.message || 'OTP verification failed');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Used after OTP-verified registration to set session directly
+  const loginUser = (userData) => {
+    setUser(userData);
+    setToken(userData.token);
+    socket.emit('joinUser', userData._id);
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -87,7 +111,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, login, register, logout, loading, error, setError }}
+      value={{ user, setUser, login, register, loginWithOtp, loginUser, logout, loading, error, setError }}
     >
       {children}
     </AuthContext.Provider>

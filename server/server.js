@@ -1,5 +1,7 @@
-const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config();
+
+const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -12,10 +14,8 @@ const applicationRoutes = require("./routes/applicationRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
-
-
-dotenv.config();
 connectDB();
+
 
 const app = express();
 const server = http.createServer(app);
