@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendOtpEmail = async (to, otp) => {
   try {
     const response = await resend.emails.send({
-      from: "onboarding@resend.dev",
+      from: "noreply@srmhive.online",
       to,
       subject: "Your SRMHive Verification Code",
       html: `
